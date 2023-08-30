@@ -1,23 +1,48 @@
 const inputBox = document.getElementById("input-box");
 const listContainer = document.getElementById("list-container");
 
-function addTask() {
-    if(inputBox.value === ''){
-        alert("you must type someting");
-    }
-    else {
-        let li = document.createElement("li");
-        li.innerHTML = inputBox.value;
-        listContainer.appendChild(li);
-        let span = document.createElement("span");
-        span.innerHTML = "\u00d7";
-        li.appendChild(span);
-    }
-    inputBox.value = "";
-    saveData();
-}
+document.querySelector('#submit').addEventListener('click', function addList() {
+  if(inputBox.value === ''){
+    alert("you must type someting");
+  }
 
-listContainer.addEventListener("click",function(e){
+  else {
+    
+    const tasks = document.querySelectorAll("li");
+    let taskExists = false;
+
+    tasks.forEach(task => {
+             
+      if (task.textContent === (inputBox.value + "\u00d7")) {
+        taskExists = true;
+      }
+    });
+
+    if (taskExists) {
+      alert("Task already exists in the list");
+    }
+
+    if (!taskExists){
+      let li = document.createElement("li");
+      li.innerHTML = inputBox.value;
+      listContainer.appendChild(li);
+      let span = document.createElement("span");
+      span.innerHTML = "\u00d7";
+      li.appendChild(span);
+    }
+  }
+  inputBox.value = "";
+  // saveData();           
+});
+
+inputBox.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addList();
+    }
+  });
+
+listContainer.addEventListener("click", function(e){
     if(e.target.tagName === "LI"){
         e.target.classList.toggle("checked");
         saveData();
@@ -28,12 +53,7 @@ listContainer.addEventListener("click",function(e){
     }
 },false);
 
-inputBox.addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        addTask();
-    }
-});
+
 
 function saveData() {
     localStorage.setItem("data", listContainer.innerHTML);
@@ -43,3 +63,5 @@ function showTask() {
     listContainer.innerHTML = localStorage.getItem("data");
 }
 showTask();
+
+
